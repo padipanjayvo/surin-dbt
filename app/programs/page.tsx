@@ -1,8 +1,11 @@
-const programs = [
-  { level: "ปวช.", duration: "3 ปี", audience: "ผู้จบ ม.3 หรือเทียบเท่า", title: "เทคโนโลยีธุรกิจดิจิทัล", detail: "เรียนพื้นฐานธุรกิจดิจิทัล การสร้างเว็บไซต์ การออกแบบสื่อ ฐานข้อมูล และการใช้เทคโนโลยีเพื่อการทำงาน" },
-  { level: "ปวส.", duration: "2 ปี", audience: "ผู้จบ ปวช. ม.6 หรือเทียบเท่า", title: "เทคโนโลยีธุรกิจดิจิทัล", detail: "ต่อยอดการพัฒนาระบบสารสนเทศ การตลาดดิจิทัล การวิเคราะห์ข้อมูล AI และโครงงานธุรกิจดิจิทัล" },
-];
+import Link from "next/link";
+import { supabase } from "@/lib/supabase";
 
-export default function ProgramsPage() {
-  return <div><h1 className="text-3xl font-bold">หลักสูตรที่เปิดสอน</h1><p className="mt-2 text-slate-600">เรียนรู้จากการลงมือปฏิบัติจริง พร้อมฝึกงานในสถานประกอบการ</p><div className="mt-8 grid md:grid-cols-2 gap-6">{programs.map((p) => <article key={p.level} className="rounded-2xl border bg-white p-7"><span className="rounded-full bg-indigo-100 px-3 py-1 text-sm font-semibold text-indigo-700">{p.level}</span><h2 className="mt-4 text-xl font-bold">{p.title}</h2><p className="mt-3 text-slate-600">{p.detail}</p><dl className="mt-5 grid grid-cols-2 gap-3 text-sm"><div><dt className="text-slate-400">ระยะเวลา</dt><dd className="font-semibold">{p.duration}</dd></div><div><dt className="text-slate-400">คุณสมบัติ</dt><dd className="font-semibold">{p.audience}</dd></div></dl></article>)}</div></div>;
+export const revalidate = 60;
+const fallback = [{ id: "voc", level: "ปวช.", duration: "3 ปี", name: "เทคโนโลยีธุรกิจดิจิทัล", description: "เรียนพื้นฐานธุรกิจดิจิทัล เว็บไซต์ สื่อ ฐานข้อมูล และเทคโนโลยีเพื่อการทำงาน" }, { id: "high-voc", level: "ปวส.", duration: "2 ปี", name: "เทคโนโลยีธุรกิจดิจิทัล", description: "ต่อยอดระบบสารสนเทศ การตลาดดิจิทัล การวิเคราะห์ข้อมูล AI และโครงงาน" }];
+
+export default async function ProgramsPage() {
+  const { data } = await supabase.from("programs").select("*").order("sort_order");
+  const programs = data?.length ? data : fallback;
+  return <div><div className="max-w-2xl"><p className="text-sm font-bold uppercase tracking-widest text-indigo-600">Programs</p><h1 className="mt-2 text-4xl font-black">หลักสูตรที่เปิดสอน</h1><p className="mt-4 leading-7 text-slate-600">เรียนรู้จากการลงมือปฏิบัติจริง พร้อมฝึกงานและสร้างแฟ้มสะสมผลงานสำหรับศึกษาต่อหรือทำงาน</p></div><div className="mt-10 grid gap-6 md:grid-cols-2">{programs.map((p) => <article key={p.id} className="rounded-3xl border bg-white p-8 shadow-sm"><span className="rounded-full bg-indigo-100 px-4 py-1.5 text-sm font-bold text-indigo-700">{p.level}</span><h2 className="mt-5 text-2xl font-black">{p.name}</h2><p className="mt-4 leading-7 text-slate-600">{p.description}</p><div className="mt-6 border-t pt-5 text-sm"><span className="text-slate-400">ระยะเวลาเรียน</span><strong className="ml-3 text-indigo-700">{p.duration}</strong></div></article>)}</div><div className="mt-10 rounded-3xl bg-indigo-600 p-8 text-white md:flex md:items-center md:justify-between"><div><h2 className="text-2xl font-black">สนใจเรียนกับเรา?</h2><p className="mt-2 text-indigo-100">กรอกใบสมัครออนไลน์ได้ทันที</p></div><Link href="/admission" className="mt-5 inline-block rounded-full bg-white px-6 py-3 font-bold text-indigo-700 md:mt-0">สมัครเรียน</Link></div></div>;
 }

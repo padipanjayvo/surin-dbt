@@ -1,5 +1,9 @@
-const roles = ["หัวหน้าแผนกวิชา", "ครูประจำแผนก", "ครูผู้สอน", "เจ้าหน้าที่สนับสนุน"];
+import Image from "next/image";
+import { supabase } from "@/lib/supabase";
 
-export default function TeachersPage() {
-  return <div><h1 className="text-3xl font-bold">บุคลากรของเรา</h1><p className="mt-2 text-slate-600">ทีมครูผู้สอนที่พร้อมส่งเสริมทักษะวิชาชีพและดูแลผู้เรียน</p><div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-4 gap-5">{roles.map((role, i) => <article key={role} className="rounded-2xl border bg-white p-6 text-center"><div className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-gradient-to-br from-indigo-100 to-violet-100 text-2xl font-bold text-indigo-700">DBT</div><h2 className="mt-4 font-bold">บุคลากรลำดับที่ {i + 1}</h2><p className="text-sm text-slate-500">{role}</p></article>)}</div><p className="mt-6 rounded-xl bg-amber-50 p-4 text-sm text-amber-800">ผู้ดูแลระบบสามารถเชื่อมข้อมูลรายชื่อและรูปบุคลากรจากตาราง teachers ใน Supabase ได้ภายหลัง</p></div>;
+export const revalidate = 60;
+
+export default async function TeachersPage() {
+  const { data } = await supabase.from("teachers").select("*").order("sort_order");
+  return <div><div className="max-w-2xl"><p className="text-sm font-bold uppercase tracking-widest text-indigo-600">Our team</p><h1 className="mt-2 text-4xl font-black">บุคลากรของเรา</h1><p className="mt-4 leading-7 text-slate-600">ทีมครูผู้สอนที่พร้อมส่งเสริมทักษะวิชาชีพ ให้คำปรึกษา และดูแลผู้เรียน</p></div><div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">{data?.length ? data.map((t) => <article key={t.id} className="overflow-hidden rounded-3xl border bg-white"><div className="relative aspect-[4/3] bg-gradient-to-br from-indigo-100 to-violet-100">{t.image_url ? <Image src={t.image_url} alt={t.name} fill sizes="(max-width: 640px) 100vw, 33vw" className="object-cover"/> : <div className="grid h-full place-items-center text-3xl font-black text-indigo-300">DBT</div>}</div><div className="p-6"><h2 className="text-lg font-black">{t.name}</h2><p className="mt-1 text-sm text-indigo-600">{t.position}</p></div></article>) : <div className="col-span-full rounded-3xl border border-dashed bg-white p-12 text-center text-slate-400">ผู้ดูแลระบบสามารถเพิ่มรายชื่อและรูปบุคลากรได้จาก Dashboard</div>}</div></div>;
 }

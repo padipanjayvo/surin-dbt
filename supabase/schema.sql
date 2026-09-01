@@ -11,6 +11,8 @@ alter table public.news enable row level security;
 alter table public.applicants enable row level security;
 create policy "public read programs" on public.programs for select using (true);
 create policy "public read teachers" on public.teachers for select using (true);
+create policy "authenticated manage programs" on public.programs for all to authenticated using (true) with check (true);
+create policy "authenticated manage teachers" on public.teachers for all to authenticated using (true) with check (true);
 create policy "public read published news" on public.news for select using (published = true or auth.role() = 'authenticated');
 create policy "authenticated manage news" on public.news for all to authenticated using (true) with check (true);
 create policy "public submit application" on public.applicants for insert to anon with check (status = 'pending');

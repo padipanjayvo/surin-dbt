@@ -5,6 +5,8 @@ import LogoutButton from "./logout-button";
 const menu = [
   { href: "/dashboard", label: "ภาพรวม" },
   { href: "/dashboard/news", label: "จัดการข่าว" },
+  { href: "/dashboard/programs", label: "จัดการหลักสูตร" },
+  { href: "/dashboard/teachers", label: "จัดการบุคลากร" },
   { href: "/dashboard/applicants", label: "ใบสมัครเรียน" },
   { href: "/", label: "ดูหน้าเว็บจริง" },
 ];
