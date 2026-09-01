@@ -1,12 +1,11 @@
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
+import { getRows } from "@/lib/google-sheets";
 import { deleteNews } from "./actions";
 
 export const dynamic = "force-dynamic";
 
 export default async function NewsList() {
-  const supabase = await createClient();
-  const { data } = await supabase.from("news").select("*").order("created_at", { ascending: false });
+  const data = (await getRows<any>("news")).sort((a,b) => String(b.created_at).localeCompare(String(a.created_at)));
 
   return (
     <div>

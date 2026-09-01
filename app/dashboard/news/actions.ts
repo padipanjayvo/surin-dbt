@@ -1,5 +1,6 @@
 "use server";
-import { createClient } from "@/lib/supabase/server";
+import { mutateSheet } from "@/lib/google-sheets";
+import { requireAdmin } from "@/lib/admin-auth";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -11,7 +12,7 @@ function makeSlug(title: string) {
 }
 
 export async function saveNews(formData: FormData) {
-  const supabase = await createClient();
+  await requireAdmin();
   const id = formData.get("id") as string | null;
 
   const payload = {
@@ -23,9 +24,9 @@ export async function saveNews(formData: FormData) {
   };
 
   if (id) {
-    await supabase.from("news").update(payload).eq("id", id);
+    await mutateSheet("news", "update", { id, ...payload });
   } else {
-    await supabase.from("news").insert({ ...payload, slug: makeSlug(payload.title) });
+    await mutateSheet("news", "create", { ...payload, slug: makeSlug(payload.title) });
   }
 
   revalidatePath("/dashboard/news");
@@ -34,8 +35,8 @@ export async function saveNews(formData: FormData) {
 }
 
 export async function deleteNews(formData: FormData) {
-  const supabase = await createClient();
-  await supabase.from("news").delete().eq("id", String(formData.get("id")));
+  await requireAdmin();
+  await mutateSheet("news", "delete", { id: String(formData.get("id")) });
   revalidatePath("/dashboard/news");
   revalidatePath("/");
 }

@@ -1,11 +1,10 @@
 import { notFound } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { findRow } from "@/lib/google-sheets";
 import NewsForm from "../news-form";
 
 export default async function EditNews({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const supabase = await createClient();
-  const { data } = await supabase.from("news").select("*").eq("id", id).single();
+  const data = await findRow<any>("news", "id", id);
   if (!data) notFound();
 
   return (

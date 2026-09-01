@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { supabase } from "@/lib/supabase";
+import { getRows } from "@/lib/google-sheets";
 
 export const revalidate = 60;
 
@@ -16,26 +16,26 @@ const skills = [
 ];
 
 export default async function Home() {
-  const [{ data: news }, { data: dbPrograms }] = await Promise.all([
-    supabase.from("news").select("id,title,slug,excerpt,published_at").eq("published", true).order("published_at", { ascending: false }).limit(3),
-    supabase.from("programs").select("id,level,name,description,duration").order("sort_order"),
-  ]);
+  const [allNews, dbPrograms] = await Promise.all([getRows<any>("news"), getRows<any>("programs")]);
+  const news = allNews.filter(n => n.published === true || String(n.published).toLowerCase() === "true").sort((a,b) => String(b.published_at).localeCompare(String(a.published_at))).slice(0,3);
   const programs = dbPrograms?.length ? dbPrograms : fallbackPrograms;
 
   return (
     <div className="space-y-24 pb-8">
-      <section className="relative isolate overflow-hidden rounded-[2rem] bg-slate-950 px-6 py-16 text-white shadow-2xl shadow-indigo-950/20 md:px-14 md:py-24">
+      <section className="hero-grid relative isolate overflow-hidden rounded-[2.5rem] bg-[#050816] px-6 py-20 text-white shadow-2xl shadow-cyan-950/30 md:px-14 md:py-28">
         <div className="absolute -right-28 -top-28 -z-10 h-80 w-80 rounded-full bg-violet-500/30 blur-3xl" />
         <div className="absolute -bottom-40 left-1/4 -z-10 h-96 w-96 rounded-full bg-cyan-400/20 blur-3xl" />
         <div className="max-w-3xl">
-          <p className="mb-5 inline-flex rounded-full border border-white/15 bg-white/10 px-4 py-2 text-xs font-semibold tracking-wide text-cyan-200">DIGITAL BUSINESS TECHNOLOGY • SRVC</p>
-          <h1 className="text-4xl font-black leading-tight tracking-tight md:text-6xl">เปลี่ยนไอเดียให้เป็น<br/><span className="bg-gradient-to-r from-cyan-300 to-violet-300 bg-clip-text text-transparent">ผลงานดิจิทัลที่ใช้ได้จริง</span></h1>
-          <p className="mt-6 max-w-2xl text-base leading-8 text-slate-300 md:text-lg">เรียนรู้เทคโนโลยี ธุรกิจ และความคิดสร้างสรรค์ ผ่านการลงมือทำ โครงงาน การแข่งขัน และประสบการณ์จากสถานประกอบการ</p>
+          <p className="mb-5 inline-flex rounded-full border border-cyan-300/30 bg-cyan-300/10 px-4 py-2 text-xs font-semibold tracking-[.18em] text-cyan-200">SRVC • DIGITAL INNOVATION ECOSYSTEM</p>
+          <h1 className="text-4xl font-black leading-[1.08] tracking-tight md:text-7xl">สร้างคนดิจิทัล<br/><span className="bg-gradient-to-r from-cyan-300 via-sky-300 to-violet-300 bg-clip-text text-transparent">ที่โลกการทำงานต้องการ</span></h1>
+          <p className="mt-6 max-w-2xl text-base leading-8 text-slate-300 md:text-lg">พื้นที่เรียนรู้ที่เชื่อมซอฟต์แวร์ AI ข้อมูล ดีไซน์ และธุรกิจเข้ากับโจทย์จริง เรียนด้วยการสร้างผลงาน แข่งขัน และฝึกประสบการณ์วิชาชีพ</p>
           <div className="mt-9 flex flex-wrap gap-3"><Link href="/admission" className="rounded-full bg-white px-7 py-3.5 font-bold text-indigo-700 transition hover:-translate-y-0.5 hover:shadow-xl">สมัครเรียนออนไลน์</Link><Link href="/programs" className="rounded-full border border-white/25 bg-white/5 px-7 py-3.5 font-semibold transition hover:bg-white/10">สำรวจหลักสูตร →</Link></div>
         </div>
       </section>
 
-      <section aria-labelledby="skills-heading"><div className="mb-8 max-w-2xl"><p className="text-sm font-bold uppercase tracking-widest text-indigo-600">Skills for the future</p><h2 id="skills-heading" className="mt-2 text-3xl font-black">ทักษะที่ได้เรียนรู้</h2><p className="mt-3 text-slate-600">สร้างพื้นฐานที่นำไปศึกษาต่อ ทำงาน หรือเริ่มต้นธุรกิจของตนเองได้</p></div><div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{skills.map((s) => <article key={s.title} className="rounded-2xl border border-slate-200 bg-white p-6 transition hover:-translate-y-1 hover:border-indigo-200 hover:shadow-lg"><span className="grid h-12 w-12 place-items-center rounded-xl bg-indigo-50 font-black text-indigo-700">{s.icon}</span><h3 className="mt-5 font-bold">{s.title}</h3><p className="mt-2 text-sm leading-6 text-slate-500">{s.text}</p></article>)}</div></section>
+      <section aria-labelledby="skills-heading"><div className="mb-8 max-w-2xl"><p className="eyebrow">Future-ready capability</p><h2 id="skills-heading" className="mt-2 text-3xl font-black md:text-4xl">เรียนจริง สร้างจริง ใช้งานจริง</h2><p className="mt-3 text-slate-600">สร้างแฟ้มผลงานและทักษะที่ต่อยอดสู่มหาวิทยาลัย อาชีพ และธุรกิจของตนเอง</p></div><div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{skills.map((s, i) => <article key={s.title} className="tech-card"><span className="grid h-12 w-12 place-items-center rounded-xl bg-slate-950 font-black text-cyan-300">{s.icon}</span><p className="mt-5 text-xs font-bold text-slate-400">0{i+1}</p><h3 className="mt-1 font-bold">{s.title}</h3><p className="mt-2 text-sm leading-6 text-slate-500">{s.text}</p></article>)}</div></section>
+
+      <section className="grid gap-5 rounded-[2rem] border border-slate-200 bg-white p-7 md:grid-cols-3 md:p-10"><div><p className="text-4xl font-black text-indigo-700">2</p><p className="mt-1 text-sm text-slate-500">ระดับหลักสูตร ปวช. และ ปวส.</p></div><div><p className="text-4xl font-black text-indigo-700">Project-based</p><p className="mt-1 text-sm text-slate-500">เรียนผ่านโครงงานและโจทย์จากโลกจริง</p></div><div><p className="text-4xl font-black text-indigo-700">Portfolio</p><p className="mt-1 text-sm text-slate-500">จบพร้อมหลักฐานทักษะที่นำเสนอได้</p></div></section>
 
       <section aria-labelledby="program-heading"><div className="mb-8 flex flex-wrap items-end justify-between gap-4"><div><p className="text-sm font-bold uppercase tracking-widest text-indigo-600">Programs</p><h2 id="program-heading" className="mt-2 text-3xl font-black">หลักสูตรที่เปิดสอน</h2></div><Link href="/programs" className="text-sm font-semibold text-indigo-700">ดูรายละเอียดทั้งหมด →</Link></div><div className="grid gap-6 md:grid-cols-2">{programs.map((p) => <article key={p.id} className="relative overflow-hidden rounded-3xl border bg-white p-8"><div className="absolute right-0 top-0 h-32 w-32 rounded-bl-full bg-indigo-50"/><span className="relative rounded-full bg-indigo-600 px-4 py-1.5 text-sm font-bold text-white">{p.level}</span><h3 className="relative mt-5 text-xl font-black">{p.name}</h3><p className="relative mt-3 max-w-lg leading-7 text-slate-600">{p.description}</p><p className="relative mt-5 text-sm font-semibold text-indigo-700">ระยะเวลา {p.duration}</p></article>)}</div></section>
 

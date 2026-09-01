@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: ["192.168.1.*"],   // ← ของเดิมจากขั้นก่อน เก็บไว้
   images: {
     remotePatterns: [
-      { protocol: "https", hostname: "**.supabase.co", pathname: "/storage/v1/object/public/**" },
+      { protocol: "https", hostname: "**" },
     ],
   },
 };

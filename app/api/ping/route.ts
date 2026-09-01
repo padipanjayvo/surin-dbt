@@ -1,6 +1,6 @@
-import { supabase } from "@/lib/supabase";
+import { getRows } from "@/lib/google-sheets";
 
 export async function GET() {
-  await supabase.from("programs").select("id").limit(1);
+  await getRows("programs");
   return Response.json({ ok: true, at: new Date().toISOString() });
 }

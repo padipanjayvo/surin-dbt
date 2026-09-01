@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { supabase } from "@/lib/supabase";
 
 export default function Admission() {
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
@@ -25,9 +24,10 @@ export default function Admission() {
       setLoading(false); return;
     }
 
-    const { error } = await supabase.from("applicants").insert(payload);
+    const response = await fetch("/api/applicants", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+    const result = await response.json();
     setLoading(false);
-    if (error) setMsg({ ok: false, text: "เกิดข้อผิดพลาด: " + error.message });
+    if (!response.ok) setMsg({ ok: false, text: "เกิดข้อผิดพลาด: " + (result.error || "ส่งข้อมูลไม่สำเร็จ") });
     else {
       setMsg({ ok: true, text: "ส่งใบสมัครเรียบร้อยแล้ว เจ้าหน้าที่จะติดต่อกลับภายใน 3 วันทำการ" });
       e.currentTarget.reset();
