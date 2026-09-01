@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #f7f8fc;
   --foreground: #171717;
 }
 
@@ -16,6 +16,11 @@ body {
   color: var(--foreground);
   font-family: "Noto Sans Thai", "Leelawadee UI", Tahoma, Arial, sans-serif;
 }
+
+.hero-grid::after { content:""; position:absolute; inset:0; z-index:-1; opacity:.18; background-image:linear-gradient(rgba(103,232,249,.22) 1px,transparent 1px),linear-gradient(90deg,rgba(103,232,249,.22) 1px,transparent 1px); background-size:42px 42px; mask-image:linear-gradient(to bottom,black,transparent); }
+.eyebrow { font-size:.75rem; font-weight:800; letter-spacing:.18em; text-transform:uppercase; color:#4f46e5; }
+.tech-card { border:1px solid #e2e8f0; border-radius:1.25rem; background:rgba(255,255,255,.85); padding:1.5rem; box-shadow:0 12px 40px rgba(15,23,42,.04); transition:.25s ease; }
+.tech-card:hover { transform:translateY(-6px); border-color:#a5b4fc; box-shadow:0 22px 50px rgba(79,70,229,.12); }
 
 html { scroll-behavior: smooth; }
 ::selection { background: #c7d2fe; color: #312e81; }

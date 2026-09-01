@@ -1,6 +1,5 @@
 "use client";
 import { useState, useMemo } from "react";
-import { createClient } from "@/lib/supabase/client";
 import * as XLSX from "xlsx";
 
 type Row = {
@@ -28,7 +27,7 @@ export default function ApplicantsTable({ rows }: { rows: Row[] }) {
 
   async function changeStatus(id: string, status: string) {
     setData((d) => d.map((r) => (r.id === id ? { ...r, status } : r)));
-    await createClient().from("applicants").update({ status }).eq("id", id);
+    await fetch("/api/admin/applicants", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, status }) });
   }
 
   function exportExcel() {

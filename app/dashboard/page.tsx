@@ -1,22 +1,15 @@
-import { createClient } from "@/lib/supabase/server";
+import { getRows } from "@/lib/google-sheets";
 
 export const dynamic = "force-dynamic";
 
 export default async function Dashboard() {
-  const supabase = await createClient();
-
-  const [apps, pending, news, teachers] = await Promise.all([
-    supabase.from("applicants").select("*", { count: "exact", head: true }),
-    supabase.from("applicants").select("*", { count: "exact", head: true }).eq("status", "pending"),
-    supabase.from("news").select("*", { count: "exact", head: true }),
-    supabase.from("teachers").select("*", { count: "exact", head: true }),
-  ]);
+  const [apps, news, teachers] = await Promise.all([getRows<any>("applicants"), getRows<any>("news"), getRows<any>("teachers")]);
 
   const cards = [
-    { label: "ใบสมัครทั้งหมด", value: apps.count ?? 0, color: "bg-indigo-50 text-indigo-700" },
-    { label: "รอตรวจสอบ", value: pending.count ?? 0, color: "bg-amber-50 text-amber-700" },
-    { label: "ข่าวทั้งหมด", value: news.count ?? 0, color: "bg-emerald-50 text-emerald-700" },
-    { label: "บุคลากร", value: teachers.count ?? 0, color: "bg-violet-50 text-violet-700" },
+    { label: "ใบสมัครทั้งหมด", value: apps.length, color: "bg-indigo-50 text-indigo-700" },
+    { label: "รอตรวจสอบ", value: apps.filter(a => a.status === "pending").length, color: "bg-amber-50 text-amber-700" },
+    { label: "ข่าวทั้งหมด", value: news.length, color: "bg-emerald-50 text-emerald-700" },
+    { label: "บุคลากร", value: teachers.length, color: "bg-violet-50 text-violet-700" },
   ];
 
   return (

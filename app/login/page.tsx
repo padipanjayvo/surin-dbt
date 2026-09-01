@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 
 export default function Login() {
   const router = useRouter();
@@ -13,14 +12,10 @@ export default function Login() {
     setLoading(true); setErr("");
     const f = new FormData(e.currentTarget);
 
-    const supabase = createClient();
-    const { error } = await supabase.auth.signInWithPassword({
-      email: String(f.get("email")),
-      password: String(f.get("password")),
-    });
+    const response = await fetch("/api/auth/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: String(f.get("email")), password: String(f.get("password")) }) });
 
     setLoading(false);
-    if (error) return setErr("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
+    if (!response.ok) return setErr("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
     router.push("/dashboard");
     router.refresh();
   }
