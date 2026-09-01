@@ -16,3 +16,6 @@ body {
   color: var(--foreground);
   font-family: "Noto Sans Thai", "Leelawadee UI", Tahoma, Arial, sans-serif;
 }
+
+html { scroll-behavior: smooth; }
+::selection { background: #c7d2fe; color: #312e81; }

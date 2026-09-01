@@ -20,6 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="th">
       <body className="bg-slate-50 text-slate-800">
+        <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-white focus:px-4 focus:py-2">ข้ามไปยังเนื้อหา</a>
         <header className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b">
           <div className="mx-auto max-w-6xl px-4 h-16 flex items-center justify-between">
             <Link href="/" className="font-bold text-indigo-700 leading-tight">
@@ -39,13 +40,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </nav>
         </header>
 
-        <main className="mx-auto max-w-6xl px-4 py-10 min-h-[70vh]">{children}</main>
+        <main id="main-content" className="mx-auto max-w-6xl px-4 py-10 min-h-[70vh]">{children}</main>
 
         <footer className="bg-slate-900 text-slate-300 py-8 text-sm">
-          <div className="mx-auto max-w-6xl px-4">
-            <p className="font-semibold text-white">แผนกวิชาเทคโนโลยีธุรกิจดิจิทัล</p>
-            <p>วิทยาลัยอาชีวศึกษาสุรินทร์ จังหวัดสุรินทร์</p>
-            <p className="mt-3 text-slate-500">© {new Date().getFullYear()} สงวนลิขสิทธิ์</p>
+          <div className="mx-auto grid max-w-6xl gap-7 px-4 md:grid-cols-2">
+            <div><p className="font-semibold text-white">แผนกวิชาเทคโนโลยีธุรกิจดิจิทัล</p><p className="mt-1">วิทยาลัยอาชีวศึกษาสุรินทร์ จังหวัดสุรินทร์</p><p className="mt-3 text-slate-500">© {new Date().getFullYear()} สงวนลิขสิทธิ์</p></div>
+            <div className="md:text-right"><p className="font-semibold text-white">เมนูด่วน</p><div className="mt-2 flex flex-wrap gap-4 md:justify-end"><Link href="/programs">หลักสูตร</Link><Link href="/admission">สมัครเรียน</Link><Link href="/login">ผู้ดูแลระบบ</Link></div></div>
           </div>
         </footer>
       </body>
