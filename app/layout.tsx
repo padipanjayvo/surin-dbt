@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
-import { Noto_Sans_Thai } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
-
-const thai = Noto_Sans_Thai({ subsets: ["thai", "latin"], weight: ["400", "600", "700"] });
 
 export const metadata: Metadata = {
   title: "แผนกวิชาเทคโนโลยีธุรกิจดิจิทัล | วิทยาลัยอาชีวศึกษาสุรินทร์",
@@ -22,7 +19,7 @@ const nav = [
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="th">
-      <body className={`${thai.className} bg-slate-50 text-slate-800`}>
+      <body className="bg-slate-50 text-slate-800">
         <header className="sticky top-0 z-50 bg-white/90 backdrop-blur border-b">
           <div className="mx-auto max-w-6xl px-4 h-16 flex items-center justify-between">
             <Link href="/" className="font-bold text-indigo-700 leading-tight">
@@ -35,6 +32,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               ))}
             </nav>
           </div>
+          <nav className="md:hidden overflow-x-auto border-t bg-white px-4 py-2 flex gap-4 text-sm whitespace-nowrap">
+            {nav.map((n) => (
+              <Link key={n.href} href={n.href} className="hover:text-indigo-600">{n.label}</Link>
+            ))}
+          </nav>
         </header>
 
         <main className="mx-auto max-w-6xl px-4 py-10 min-h-[70vh]">{children}</main>
